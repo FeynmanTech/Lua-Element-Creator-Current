@@ -57,7 +57,7 @@ GUICtrlSetColor ( $update , 0xFFFFFF )
 
 GUICtrlSetBkColor ( $update , 0x000000 )
 
-#cs
+#comments-start
 
 Return Values: cache, pixel_mode, cola, colr, colg, colb, firea, firer, fireg, fireb
 
@@ -84,7 +84,7 @@ FIRE_BLEND		0x00020000 		--adds a stronger fire effect around the element, defau
 EFFECT_GRAVIN	0x01000000 		--adds a PRTI effect. Might take some coding in an update function to get it to work properly, PRTI uses life and ctype to create the effects
 EFFECT_GRAVOUT	0x02000000 		--adds a PRTO effect. Might take some coding in an update function to get it to work properly, PRTI uses life and ctype to create the effects
 
-#ce
+#comments-end
 
 Static $GraphicsFuncDef = "local cola, colr, colg, colb, firea, firer, fireg, fireb" & @CRLF _
 & "cola = 255 -- Alpha " & @CRLF _
