@@ -8,24 +8,28 @@
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_Res_Comment=This is, has been, and ever will be buggy. If it doesn't work, just tell me (FeynmanLogomaker) in a PM, or on the forum thread.
 #AutoIt3Wrapper_Res_Description=A program designed to create Lua scripts that will create an element in The Powder Toy
-#AutoIt3Wrapper_Res_Fileversion=5.0.3
+#AutoIt3Wrapper_Res_Fileversion=5.2.0
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ; *** Start added by AutoIt3Wrapper ***
 #include <GUIConstantsEx.au3>
 ; *** End added by AutoIt3Wrapper ***
-#include <utils.au3> ;Don't worry, it's only ever used for debugging. This line should be commented out if you intend
-		     ;on compiling or running this.
+#include <utils.au3>
+
 
 Local $filename
 
-Static $_VER = "5.0.3"
+Static $_VER = "5.2.0"
+
+Static $_W = 1275
+
+Static $_H = 615
 
 Static $FontWeight = 200
 
 DirCreate( "Lua Elements" )
 
-$guihnd = GUICreate("Lua Element Tool", 1275, 615)
+$guihnd = GUICreate("Lua Element Tool", $_W, $_H)
 
 GUISetState(@SW_SHOW)
 
@@ -43,13 +47,66 @@ GUICtrlCreateLabel ( "Lua Element Tool Version " & $_VER , 145 , 19 , 350 , 30 )
 
 GUICtrlSetFont ( -1 , 15 , 200 , 0 , "Segoe UI" , 1 )
 
-$update = GUICtrlCreateEdit( "--Update Function" , 525 , 20 , 355 , 560 )
+GUICtrlCreateLabel ( "Update Function" , 525 , 10 )
+
+$update = GUICtrlCreateEdit( "--Update Function" , 525 , 30 , 355 , $_H - 55 )
 
 GUICtrlSetFont ( $update , 10 , 200 , 0 , "Consolas" , 1 )
 
-$graphics = GUICtrlCreateEdit( "--Graphics Function" , 900 , 20 , 355 , 560 )
+GUICtrlSetColor ( $update , 0xFFFFFF )
+
+GUICtrlSetBkColor ( $update , 0x000000 )
+
+#cs
+
+Return Values: cache, pixel_mode, cola, colr, colg, colb, firea, firer, fireg, fireb
+
+Pixel Mode Values:
+
+PMODE_NONE		0x00000000 		--prevents anything from being drawn
+PMODE_FLAT		0x00000001 		--draw a basic pixel, overwriting the color under it. Doesn't support cola.
+PMODE_BLOB		0x00000002 		--adds a blobby effect, like you were using blob (5) display mode
+PMODE_BLUR		0x00000004 		--used in liquids in fancy display mode
+PMODE_GLOW		0x00000008 		--Glow effect, used in elements like DEUT and TRON in fancy display mode
+PMODE_SPARK		0x00000010 		-- used for things such as GBMB at first, dimmer than other modes
+PMODE_FLARE		0x00000020 		--BOMB and other similar elements, brighter than PMODE_SPARK
+PMODE_LFLARE	0x00000040 		--brightest spark mode, used when DEST hits something
+PMODE_ADD		0x00000080 		--like PMODE_FLAT, but adds color to a pixel, instead of overwriting it.
+PMODE_BLEND		0x00000100 		--basically the same thing as PMODE_ADD, but has better OpenGL support
+PSPEC_STICKMAN	0x00000200 		--does nothing, because the stickmen won't get drawn unless it actually is one
+
+NO_DECO			0x00001000		--prevents decoration from showing on the element (used in LCRY)
+DECO_FIRE		0x00002000 		--Allow decoration to be drawn on using the fire effect (gasses have this set)
+
+FIRE_ADD		0x00010000 		--adds a weak fire effect around the element (ex. LAVA/LIGH)
+FIRE_BLEND		0x00020000 		--adds a stronger fire effect around the element, default for gasses
+
+EFFECT_GRAVIN	0x01000000 		--adds a PRTI effect. Might take some coding in an update function to get it to work properly, PRTI uses life and ctype to create the effects
+EFFECT_GRAVOUT	0x02000000 		--adds a PRTO effect. Might take some coding in an update function to get it to work properly, PRTI uses life and ctype to create the effects
+
+#ce
+
+Static $GraphicsFuncDef = "local cola, colr, colg, colb, firea, firer, fireg, fireb" & @CRLF _
+& "cola = 255 -- Alpha " & @CRLF _
+& "colr = 255 -- Red " & @CRLF _
+& "colg = 255 -- Green " & @CRLF _
+& "colb = 255 -- Blue " & @CRLF _
+& "firea = 255 -- Alpha Glow " & @CRLF _
+& "firer = 255 -- Red Glow " & @CRLF _
+& "fireg = 255 -- Green Glow " & @CRLF _
+& "fireb = 255 -- Blue Glow " & @CRLF _
+& "--See Pixel Mode Values Table for more info" & @CRLF _
+& "return 0, 0x00000001, cola, colr, colg, colb, firea, firer, fireg, fireb"
+
+GUICtrlCreateLabel ( "Graphics Fuction" , 900 , 10 )
+
+$graphics = GUICtrlCreateEdit( $GraphicsFuncDef , 900 , 30 , 355 , $_H - 55 )
 
 GUICtrlSetFont ( $graphics , 10 , 200 , 0 , "Consolas" , 1 )
+
+GUICtrlSetColor ( $graphics , 0xFFFFFF )
+
+GUICtrlSetBkColor ( $graphics , 0x000000 )
 
 $name = GUICtrlCreateInput( "ELEM" , 10 , $cy + 15 , 130 , 20 )
 
