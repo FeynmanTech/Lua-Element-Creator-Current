@@ -3,3 +3,6 @@
   Width/Height -> static variables, to make editing a bit simpler
   Graphics Function Helper (Make complicated return value a bit simpler, etc)
   
+5.2.0:
+  Create Graphics Function Helper - DONE
+  Templates?
