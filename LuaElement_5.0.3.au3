@@ -8,18 +8,18 @@
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_Res_Comment=This is, has been, and ever will be buggy. If it doesn't work, just tell me (FeynmanLogomaker) in a PM, or on the forum thread.
 #AutoIt3Wrapper_Res_Description=A program designed to create Lua scripts that will create an element in The Powder Toy
-#AutoIt3Wrapper_Res_Fileversion=2.1.1
+#AutoIt3Wrapper_Res_Fileversion=5.0.3
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ; *** Start added by AutoIt3Wrapper ***
 #include <GUIConstantsEx.au3>
 ; *** End added by AutoIt3Wrapper ***
-#include <utils.au3>
-
+#include <utils.au3> ;Don't worry, it's only ever used for debugging. This line should be commented out if you intend
+		     ;on compiling or running this.
 
 Local $filename
 
-Static $_VER = "4.7.3"
+Static $_VER = "5.0.3"
 
 Static $FontWeight = 200
 
