@@ -1,0 +1,5 @@
+5.0.3:
+  Add more properties
+  Width/Height -> static variables, to make editing a bit simpler
+  Graphics Function Helper (Make complicated return value a bit simpler, etc)
+  
