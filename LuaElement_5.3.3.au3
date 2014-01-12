@@ -8,7 +8,7 @@
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_Res_Comment=This is, has been, and ever will be buggy. If it doesn't work, just tell me (FeynmanLogomaker) in a PM, or on the forum thread.
 #AutoIt3Wrapper_Res_Description=A program designed to create Lua scripts that will create an element in The Powder Toy
-#AutoIt3Wrapper_Res_Fileversion=5.3.3.0
+#AutoIt3Wrapper_Res_Fileversion=6.1.3.0
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ; *** Start added by AutoIt3Wrapper ***
@@ -209,7 +209,7 @@ EndFunc
 
 Local $filename
 
-Static $_VER = "5.3.3"
+Static $_VER = "6.1.3"
 
 Static $_CURRENT = GetUrlData ( "http://pastebin.com/raw.php?i=4VxNwZ29" )
 
