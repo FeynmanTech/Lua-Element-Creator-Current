@@ -7,8 +7,7 @@
 #AutoIt3Wrapper_UseUpx=n
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_Res_Comment=This is, has been, and ever will be buggy. If it doesn't work, just tell me (FeynmanLogomaker) in a PM, or on the forum thread.
-#AutoIt3Wrapper_Res_Description=A program designed to create Lua scripts that will create an element in The Powder Toy
-#AutoIt3Wrapper_Res_Fileversion=6.1.3.0
+#AutoIt3Wrapper_Res_Fileversion=6.2.0.0
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ; *** Start added by AutoIt3Wrapper ***
@@ -62,7 +61,7 @@ EndFunc
 Func GetGraphicsFunc ( )
 	Static $w = 370, $h = 565
 
-	Local $guihnd = GUICreate("Graphics Function Helper", $w, $h)
+	Local $gfhguihnd = GUICreate("Graphics Function Helper", $w, $h)
 
 	GUISetState(@SW_SHOW)
 
@@ -72,7 +71,7 @@ Func GetGraphicsFunc ( )
 
 	GUICtrlSetDefBkColor ( 0xFFFFFF )
 
-	GUISetFont ( 8.5 , $FontWeight , 0 , "" , $guihnd , 1 )
+	GUISetFont ( 8.5 , $FontWeight , 0 , "" , $gfhguihnd , 1 )
 
 	#comments-start
 
@@ -182,15 +181,16 @@ Func GetGraphicsFunc ( )
 		Select
 
 			Case $msg[0] = $GUI_EVENT_CLOSE
-				If $msg[1] = $guihnd Then
-					Exit
+				If $msg[1] = $gfhguihnd Then
+					GuiDelete ( $gfhguihnd )
+					ExitLoop
 				ElseIf $msg[1] = $CodeWin Then
 					GuiDelete ( $CodeWin )
 				EndIf
 
 			Case $msg[0] = $prev
 
-				Local $CodeWin = GUICreate ( "Code:" , 430 , 61 , -1 , -1 , -1 , -1 , $guihnd )
+				Local $CodeWin = GUICreate ( "Code:" , 430 , 61 , -1 , -1 , -1 , -1 , $gfhguihnd )
 				GUISetState ( @SW_SHOW )
 
 				GUICtrlCreateLabel ( GetPmode ( $flat , $blob , $blur , $glow , $spark , $flare , $lflare , $fireadd , $fireblend , $sliderA , $sliderR , $sliderG , $sliderB , $sliderAG , $sliderRG , $sliderGG , $sliderBG ) , 5 , 5 , 490 , 55 )
@@ -209,7 +209,7 @@ EndFunc
 
 Local $filename
 
-Static $_VER = "6.1.3"
+Static $_VER = "6.2.0"
 
 Static $_CURRENT = GetUrlData ( "http://pastebin.com/raw.php?i=4VxNwZ29" )
 
