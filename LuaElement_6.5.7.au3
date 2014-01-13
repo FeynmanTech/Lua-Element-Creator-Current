@@ -7,7 +7,8 @@
 #AutoIt3Wrapper_UseUpx=n
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_Res_Comment=This is, has been, and ever will be buggy. If it doesn't work, just tell me (FeynmanLogomaker) in a PM, or on the forum thread.
-#AutoIt3Wrapper_Res_Fileversion=6.2.0.0
+#AutoIt3Wrapper_Res_Fileversion=6.5.7.0
+#AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ; *** Start added by AutoIt3Wrapper ***
@@ -209,16 +210,25 @@ EndFunc
 
 Local $filename
 
-Static $_VER = "6.2.0"
+Static $_VER = "6.5.7"
 
-Static $_CURRENT = GetUrlData ( "http://pastebin.com/raw.php?i=4VxNwZ29" )
+Static $_DOWNLOAD_URL = "https://dl.dropboxusercontent.com/s/92w0ae9e6og98kr/Ver.%206.5.7.zip?dl=1&token_hash=AAFWQ-2pjkGSUhSVAgjJXlMCJcT7cv0U6ZHdIV4jkGKRMg"
+Static $_VERSION_URL = "http://pastebin.com/raw.php?i=4VxNwZ29"
+Static $_WHATSNEW_URL = "http://pastebin.com/raw.php?i=2ZR5K1XV"
 
-Static $_WHATSNEW = GetUrlData ( "http://pastebin.com/raw.php?i=2ZR5K1XV" )
+Static $_CURRENT = GetUrlData ( $_VERSION_URL )
+
+Static $_WHATSNEW = GetUrlData ( $_WHATSNEW_URL )
 
 If $_VER <> $_CURRENT Then
 
-	disp ( "Software is out of date!" & @CRLF & "Your version: " & $_VER & @CRLF & "Current version: " & $_CURRENT & @CRLF & @CRLF & "What's New: " & $_WHATSNEW , "Update available" )
+	Local $Result = prompt_YesNo ( "Software is out of date!" & @CRLF & "Your version: " & $_VER & @CRLF & "Current version: " & $_CURRENT & @CRLF & @CRLF & "What's New: " & $_WHATSNEW & @CRLF & @CRLF & "Download update?" , "Update available" )
 
+	if $result = 6 Then
+
+		$file = InetGet ( $_DOWNLOAD_URL , "Ver. " & $_CURRENT & "_Updated.zip" , 16 , 1 )
+
+	EndIf
 EndIf
 
 Static $_W = 1275
@@ -611,6 +621,10 @@ While 1
 			SaveFileAs ( )
 
 	EndSwitch
+
+	If InetGetInfo ( $file , 2 ) = True Then
+		InetClose ( $file )
+	EndIf
 
 #cs - Uncomment this to use real-time updating of the color displays ( it is a bit laggy )
 
