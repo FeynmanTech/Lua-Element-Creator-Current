@@ -10,3 +10,4 @@
 7.?.?:
   Completely rewriting GUI design
   Option to generate C/C++ code to be used for building an element in a compiled mod
+  Move update data to Github
