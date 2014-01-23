@@ -6,3 +6,7 @@
 5.2.0:
   Create Graphics Function Helper - DONE
   Templates?
+
+7.?.?:
+  Completely rewriting GUI design
+  Option to generate C/C++ code to be used for building an element in a compiled mod
