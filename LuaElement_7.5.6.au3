@@ -109,7 +109,7 @@ Func BugRep ( )
 	GUICtrlSetStyle ( $eDesc , 0x00001000 , 0x00000020 )
 	GUICtrlSetBkColor ( $eDesc , 0xB0B0B0 )
 
-	$eCause = GUICtrlCreateEdit ( "Cause of bug (Please describe what you did to cause it, and" & @CRLF & "what we could do to reproduce it" , 10 , 170 , 380 , 75 )
+	$eCause = GUICtrlCreateEdit ( "Cause of bug (Please describe what you did to cause it, and" & @CRLF & "what we could do to reproduce it)" , 10 , 170 , 380 , 75 )
 	GUICtrlSetStyle ( $eCause , 0x00000000 , 0x00000020 )
 	GUICtrlSetBkColor ( $eCause , 0xB0B0B0 )
 
