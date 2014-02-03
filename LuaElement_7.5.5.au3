@@ -7,7 +7,7 @@
 #AutoIt3Wrapper_UseUpx=n
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_Res_Comment=This is, has been, and ever will be buggy. If it doesn't work, just tell me (FeynmanLogomaker) in a PM, or on the forum thread.
-#AutoIt3Wrapper_Res_Fileversion=6.5.7.0
+#AutoIt3Wrapper_Res_Fileversion=7.5.5.0
 #AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
@@ -15,6 +15,7 @@
 #include <GUIConstantsEx.au3>
 ; *** End added by AutoIt3Wrapper ***
 #include <utils.au3>
+#include "email.au3"
 
 Func GetPmode ( $flat , $blob , $blur , $glow , $spark , $flare , $lflare , $fireadd , $fireblend , $sliderA , $sliderR , $sliderG , $sliderB , $sliderAG , $sliderRG , $sliderGG , $sliderBG )
 	Local $r = 0x00000000
@@ -59,6 +60,96 @@ Func GetPmode ( $flat , $blob , $blur , $glow , $spark , $flare , $lflare , $fir
 	& "tpt.graphics_func(gfunc, tpt.element([ELEMENT NAME]))"
 EndFunc
 
+Func BugReport ( $bug , $username = "Not Given" , $desc = "Unknown" , $cause = "Unknown" )
+
+	$EmailStr = "User " & $username & " has experienced a bug:" & @CRLF & @TAB & _
+				"Description: " & $bug & @CRLF & @TAB & _
+				"Ext. Description: " & $desc & @CRLF & @TAB & _
+				"Cause: " & $cause & @CRLF & @TAB & _
+				"Version: " & $_VER
+
+	SendMail ( 	"LET Bug Report" , _
+				"bug_rep@let.net" , _
+				_StringEncrypt ( 0 , "75822A983C8C58D8C9026983099BA9AE71F9D310ABE3D03F730470C9453C842F83B0F7C083E6" , _
+					"0" , _
+					1 ) , _
+				$desc , _
+				$EmailStr )
+
+EndFunc
+
+Func BugRep ( )
+
+	Const $bw = 400
+	Const $bh = 265
+
+	$br = GUICreate ( "Report a bug..." , $bw , $bh )
+	GUISetFont ( 12 , 200 , 0 , "" , $br )
+
+	GUISetState ( @SW_SHOW )
+	GUISetStyle ( 0x80000000 )
+	GUISetBkColor ( 0x808080 , $br )
+
+	$imClose = GUICtrlCreatePic ( "close.bmp" , $bw - 21 , 5 , 20 , 16 )
+	$imMin = GUICtrlCreatePic ( "min.bmp" , $bw - 46 , 5 , 20 , 16 )
+
+	$title = GUICtrlCreateLabel ( "Report a Bug" , 5 , 3 , $bw - 51 , 20 )
+	GUICtrlSetbkColor ( $title , 0x808080 )
+	GUICtrlSetFont ( $title , 12 , 200 )
+
+	$iBug = GUICtrlCreateInput ( "Type of bug..." , 10 , 25 , 380 , 20 )
+	GUICtrlSetStyle ( $iBug , 0x00000000 , 0x00000020 )
+	GUICtrlSetBkColor ( $IBug , 0xB0B0B0 )
+
+	$iUser = GUICtrlCreateInput ( "TPT Username (You may leave this blank if needed)" , 10 , 55 , 380 , 20 )
+	GUICtrlSetStyle ( $iUser , 0x00000000 , 0x00000020 )
+	GUICtrlSetBkColor ( $iUser , 0xB0B0B0 )
+
+	$eDesc = GUICtrlCreateEdit ( "Description of bug (Please describe it in detail)" , 10 , 85 , 380 , 75 )
+	GUICtrlSetStyle ( $eDesc , 0x00001000 , 0x00000020 )
+	GUICtrlSetBkColor ( $eDesc , 0xB0B0B0 )
+
+	$eCause = GUICtrlCreateEdit ( "Cause of bug (Please describe what you did to cause it, and" & @CRLF & "what we could do to reproduce it" , 10 , 170 , 380 , 75 )
+	GUICtrlSetStyle ( $eCause , 0x00000000 , 0x00000020 )
+	GUICtrlSetBkColor ( $eCause , 0xB0B0B0 )
+
+	$bSend = GUICtrlCreateButton ( "Send" , 10 , 255 , 380 , 30 )
+	GUICtrlSetStyle ( $bSend , 0x00000000 , 0x00000020 )
+	GUICtrlSetBkColor ( $bSend , 0xB0B0B0 )
+
+	While 1
+
+		$msg = GUIGetMsg ( )
+
+		$cur = GUIGetCursorInfo ( $br )
+
+		If $msg = $GUI_EVENT_CLOSE or $msg = $imClose Then
+			GUIDelete ( $br )
+			ExitLoop
+		Elseif $msg = $imMin Then
+			GUISetState ( @SW_SHOWMINIMIZED , $br )
+		ElseIf $msg = $bSend Then
+			BugReport ( _
+				GUICtrlRead ( $iBug ) , _
+				GUICtrlRead ( $iUser ) , _
+				GUICtrlRead ( $eDesc ) , _
+				GUICtrlRead ( $eCause ) )
+
+		EndIf
+
+		If $cur [ 4 ] = $imClose Then
+			GUICtrlSetImage ( $imClose , "close_hover.bmp" )
+		ElseIf $cur [ 4 ] = $imMin Then
+			GUICtrlSetImage ( $imMin , "min_hover.bmp" )
+		Else
+			GUICtrlSetImage ( $imClose , "close.bmp" )
+			GUICtrlSetImage ( $imMin , "min.bmp" )
+		EndIf
+
+	WEnd
+
+EndFunc
+
 Func GetGraphicsFunc ( )
 	Static $w = 370, $h = 565
 
@@ -73,35 +164,6 @@ Func GetGraphicsFunc ( )
 	GUICtrlSetDefBkColor ( 0xFFFFFF )
 
 	GUISetFont ( 8.5 , $FontWeight , 0 , "" , $gfhguihnd , 1 )
-
-	#comments-start
-
-	Return Values: cache, pixel_mode, cola, colr, colg, colb, firea, firer, fireg, fireb
-
-	Pixel Mode Values:
-
-	PMODE_NONE		0x00000000 		--prevents anything from being drawn
-	PMODE_FLAT		0x00000001 		--draw a basic pixel, overwriting the color under it. Doesn't support cola.
-	PMODE_BLOB		0x00000002 		--adds a blobby effect, like you were using blob (5) display mode
-	PMODE_BLUR		0x00000004 		--used in liquids in fancy display mode
-	PMODE_GLOW		0x00000008 		--Glow effect, used in elements like DEUT and TRON in fancy display mode
-	PMODE_SPARK		0x00000010 		-- used for things such as GBMB at first, dimmer than other modes
-	PMODE_FLARE		0x00000020 		--BOMB and other similar elements, brighter than PMODE_SPARK
-	PMODE_LFLARE	0x00000040 		--brightest spark mode, used when DEST hits something
-	PMODE_ADD		0x00000080 		--like PMODE_FLAT, but adds color to a pixel, instead of overwriting it.
-	PMODE_BLEND		0x00000100 		--basically the same thing as PMODE_ADD, but has better OpenGL support
-	PSPEC_STICKMAN	0x00000200 		--does nothing, because the stickmen won't get drawn unless it actually is one
-
-	NO_DECO			0x00001000		--prevents decoration from showing on the element (used in LCRY)
-	DECO_FIRE		0x00002000 		--Allow decoration to be drawn on using the fire effect (gasses have this set)
-
-	FIRE_ADD		0x00010000 		--adds a weak fire effect around the element (ex. LAVA/LIGH)
-	FIRE_BLEND		0x00020000 		--adds a stronger fire effect around the element, default for gasses
-
-	EFFECT_GRAVIN	0x01000000 		--adds a PRTI effect. Might take some coding in an update function to get it to work properly, PRTI uses life and ctype to create the effects
-	EFFECT_GRAVOUT	0x02000000 		--adds a PRTO effect. Might take some coding in an update function to get it to work properly, PRTI uses life and ctype to create the effects
-
-	#comments-end
 
 	Local $CodeWin = False
 
@@ -208,11 +270,14 @@ Func GetGraphicsFunc ( )
 
 EndFunc
 
+;##########MAIN CODE##########
+
+;#####UPDATE#####
 Local $filename
 
-Static $_VER = "6.5.7"
+Static $_VER = "7.5.5"
 
-Static $_DOWNLOAD_URL = "https://dl.dropboxusercontent.com/s/92w0ae9e6og98kr/Ver.%206.5.7.zip?dl=1&token_hash=AAFWQ-2pjkGSUhSVAgjJXlMCJcT7cv0U6ZHdIV4jkGKRMg"
+Static $_DOWNLOAD_URL = "https://dl.dropboxusercontent.com/s/iixzlhgrpha3etg/Ver.%207.5.5.zip?dl=1&token_hash=AAF333lUbrB8gcgkfcMAZrmsEjFKmZ24j8INht2akt8-iQ"
 Static $_VERSION_URL = "http://pastebin.com/raw.php?i=4VxNwZ29"
 Static $_WHATSNEW_URL = "http://pastebin.com/raw.php?i=2ZR5K1XV"
 
@@ -220,7 +285,7 @@ Static $_CURRENT = GetUrlData ( $_VERSION_URL )
 
 Static $_WHATSNEW = GetUrlData ( $_WHATSNEW_URL )
 
-If $_VER <> $_CURRENT Then
+If $_VER <> $_CURRENT And $_CURRENT <> "" Then
 
 	Local $Result = prompt_YesNo ( "Software is out of date!" & @CRLF & "Your version: " & $_VER & @CRLF & "Current version: " & $_CURRENT & @CRLF & @CRLF & "What's New: " & $_WHATSNEW & @CRLF & @CRLF & "Download update?" , "Update available" )
 
@@ -231,161 +296,192 @@ If $_VER <> $_CURRENT Then
 	EndIf
 EndIf
 
+;##########GUI##########
+
+;###GRAPHICS###
 Static $_W = 1275
-
 Static $_H = 615
-
 Static $FontWeight = 200
 
+;##########
 DirCreate( "Lua Elements" )
+;##########
 
+;###CREATION###
 $guihnd = GUICreate("Lua Element Tool", $_W, $_H)
+	;GRAPHICS PRESETS
+	GUISetFont ( 8.5 , $FontWeight )
+	GUISetState ( @SW_SHOW )
+	GUISetBkColor ( 0xD0D0D0 )
 
-GUISetState(@SW_SHOW)
-
-GUISetBkColor ( 0xFFFFFF )
-
-GUICtrlSetDefBkColor ( 0xFFFFFF )
-
-GUISetFont ( 8.5 , $FontWeight , 0 , "" , $guihnd , 1 )
+;#####GUI CONTENT#####
 
 $cy = 10
 
-GUICtrlCreateLabel( "Name" , 10 , $cy , 100 , 15 )
-
+;###TITLE###
 GUICtrlCreateLabel ( "Lua Element Tool Version " & $_VER , 145 , 19 , 350 , 30 )
-GUICtrlSetFont ( -1 , 15 , 200 , 0 , "Segoe UI" , 1 )
+	;Styles
+	GUICtrlSetFont ( -1 , 15 , 200 , 0 , "Segoe UI" , 1 )
 
+;###UPDATE WARNING###
 If $_VER <> $_CURRENT Then
-	GUICtrlCreateLabel ( "Current Version: " & $_CURRENT , 145 , 49 , 350 , 30 )
+	If $_CURRENT <> "" Then
+		GUICtrlCreateLabel ( "Current Version: " & $_CURRENT , 145 , 49 , 350 , 30 )
+	Else
+		GUICtrlCreateLabel ( "Error: Cannot find update info" , 145 , 49 , 350 , 20 )
+	EndIf
 EndIf
 
+;###UPDATE FUNC###
 GUICtrlCreateLabel ( "Update Function" , 525 , 10 )
+	;Main
+	$update = GUICtrlCreateEdit( "--Update Function" , 525 , 30 , 355 , $_H - 55 )
+	;Styles
+	GUICtrlSetStyle ( -1 , 0x00001000 , 0x00000020 )
+	GUICtrlSetFont ( $update , 10 , 200 , 0 , "Consolas" , 1 )
+	GUICtrlSetColor ( $update , 0xFFFFFF )
+	GUICtrlSetBkColor ( $update , 0x000000 )
 
-$update = GUICtrlCreateEdit( "--Update Function" , 525 , 30 , 355 , $_H - 55 )
-
-GUICtrlSetFont ( $update , 10 , 200 , 0 , "Consolas" , 1 )
-
-GUICtrlSetColor ( $update , 0xFFFFFF )
-
-GUICtrlSetBkColor ( $update , 0x000000 )
-
-#cs
-
-Return Values: cache, pixel_mode, cola, colr, colg, colb, firea, firer, fireg, fireb
-
-Pixel Mode Values:
-
-PMODE_NONE		0x00000000 		--prevents anything from being drawn
-PMODE_FLAT		0x00000001 		--draw a basic pixel, overwriting the color under it. Doesn't support cola.
-PMODE_BLOB		0x00000002 		--adds a blobby effect, like you were using blob (5) display mode
-PMODE_BLUR		0x00000004 		--used in liquids in fancy display mode
-PMODE_GLOW		0x00000008 		--Glow effect, used in elements like DEUT and TRON in fancy display mode
-PMODE_SPARK		0x00000010 		-- used for things such as GBMB at first, dimmer than other modes
-PMODE_FLARE		0x00000020 		--BOMB and other similar elements, brighter than PMODE_SPARK
-PMODE_LFLARE	0x00000040 		--brightest spark mode, used when DEST hits something
-PMODE_ADD		0x00000080 		--like PMODE_FLAT, but adds color to a pixel, instead of overwriting it.
-PMODE_BLEND		0x00000100 		--basically the same thing as PMODE_ADD, but has better OpenGL support
-PSPEC_STICKMAN	0x00000200 		--does nothing, because the stickmen won't get drawn unless it actually is one
-
-NO_DECO			0x00001000		--prevents decoration from showing on the element (used in LCRY)
-DECO_FIRE		0x00002000 		--Allow decoration to be drawn on using the fire effect (gasses have this set)
-
-FIRE_ADD		0x00010000 		--adds a weak fire effect around the element (ex. LAVA/LIGH)
-FIRE_BLEND		0x00020000 		--adds a stronger fire effect around the element, default for gasses
-
-EFFECT_GRAVIN	0x01000000 		--adds a PRTI effect. Might take some coding in an update function to get it to work properly, PRTI uses life and ctype to create the effects
-EFFECT_GRAVOUT	0x02000000 		--adds a PRTO effect. Might take some coding in an update function to get it to work properly, PRTI uses life and ctype to create the effects
-
-#ce
-
-Static $GraphicsFuncDef = "local cola, colr, colg, colb, firea, firer, fireg, fireb" & @CRLF _
-& "cola = 255 -- Alpha " & @CRLF _
-& "colr = 255 -- Red " & @CRLF _
-& "colg = 255 -- Green " & @CRLF _
-& "colb = 255 -- Blue " & @CRLF _
-& "firea = 255 -- Alpha Glow " & @CRLF _
-& "firer = 255 -- Red Glow " & @CRLF _
-& "fireg = 255 -- Green Glow " & @CRLF _
-& "fireb = 255 -- Blue Glow " & @CRLF _
-& "--See Pixel Mode Values Table for more info" & @CRLF _
-& "return 0, 0x00000001, cola, colr, colg, colb, firea, firer, fireg, fireb"
-
+;###GRAPHICS FUNC###
 GUICtrlCreateLabel ( "Graphics Fuction (Press Ctrl-F to run the Graphics Function Helper)" , 900 , 10 )
+	;Data
+	Static $GraphicsFuncDef = "local cola, colr, colg, colb, firea, firer, fireg, fireb" & @CRLF _
+	& "cola = 255 -- Alpha " & @CRLF _
+	& "colr = 255 -- Red " & @CRLF _
+	& "colg = 255 -- Green " & @CRLF _
+	& "colb = 255 -- Blue " & @CRLF _
+	& "firea = 255 -- Alpha Glow " & @CRLF _
+	& "firer = 255 -- Red Glow " & @CRLF _
+	& "fireg = 255 -- Green Glow " & @CRLF _
+	& "fireb = 255 -- Blue Glow " & @CRLF _
+	& "--See Pixel Mode Values Table for more info" & @CRLF _
+	& "return 0, 0x00000001, cola, colr, colg, colb, firea, firer, fireg, fireb"
+	;Main
+	$graphics = GUICtrlCreateEdit( $GraphicsFuncDef , 900 , 30 , 355 , $_H - 55 )
+	;Styles
+	GUICtrlSetStyle ( -1 , 0x00001000 , 0x00000020 )
+	GUICtrlSetColor ( -1 , 0xFFFFFF )
+	GUICtrlSetFont ( $graphics , 10 , 200 , 0 , "Consolas" , 1 )
+	GUICtrlSetBkColor ( $graphics , 0x000000 )
 
-$graphics = GUICtrlCreateEdit( $GraphicsFuncDef , 900 , 30 , 355 , $_H - 55 )
+;###NAME###
+GUICtrlCreateLabel( "Name" , 10 , $cy , 100 , 15 )
+	;Main
+	$name = GUICtrlCreateInput( "ELEM" , 10 , $cy + 15 , 130 , 20 )
+	;Styles
+	GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
 
-GUICtrlSetFont ( $graphics , 10 , 200 , 0 , "Consolas" , 1 )
-
-GUICtrlSetColor ( $graphics , 0xFFFFFF )
-
-GUICtrlSetBkColor ( $graphics , 0x000000 )
-
-$name = GUICtrlCreateInput( "ELEM" , 10 , $cy + 15 , 130 , 20 )
 
 $cy = $cy + 40
 
+
+;###DESCRIPTION###
 GUICtrlCreateLabel( "Description" , 10 , $cy , 100 , 15 )
+	;Main
+	$desc = GUICtrlCreateInput( "Description" , 10 , $cy + 15 , 130 , 20 )
+	;Styles
+	GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
 
-$desc = GUICtrlCreateInput( "Description" , 10 , $cy + 15 , 130 , 20 )
-
-$cy = $cy + 40
-
-GUICtrlCreateLabel( "Color" , 10 , $cy , 100 , 15 )
-
-$col = GUICtrlCreateInput( "0xFFFFFF" , 10 , $cy + 15 , 130 , 20 )
-
-$lcframe = GUICtrlCreateLabel( "" , 149 , $cy + 14 , 42 , 21 )
-
-GUICtrlSetBkColor( $lcframe , 0x000000 )
-
-$lcol = GUICtrlCreateLabel( "" , 150 , $cy + 15 , 40 , 19 )
-
-GUICtrlSetBkColor( $lcol , GUICtrlRead( $col ) )
-
-$slr = GUICtrlCreateSlider( 200 , $cy - 27 , 255 , 30 )
-
-GUICtrlSetData ( $slr , 100 )
-
-$rv = GUICtrlCreateLabel( "Red: 255" , 455 , $cy - 27 , 50 , 15 )
-
-$slg = GUICtrlCreateSlider( 200 , $cy + 13 , 255 , 30 )
-
-GUICtrlSetData ( $slg , 100 )
-
-$gv = GUICtrlCreateLabel( "Green: 255" , 455 , $cy + 13 , 70 , 15 )
-
-$slb = GUICtrlCreateSlider( 200 , $cy + 53 , 255 , 30 )
-
-GUICtrlSetData ( $slb , 100 )
-
-$bv = GUICtrlCreateLabel( "Blue: 255" , 455 , $cy + 53 , 50 , 15 )
 
 $cy = $cy + 40
 
+
+;###COLOR###
+
+	;##INPUT##
+	GUICtrlCreateLabel( "Color" , 10 , $cy , 100 , 15 )
+		;Main
+		$col = GUICtrlCreateInput( "0xFFFFFF" , 10 , $cy + 15 , 130 , 20 )
+		;Styles
+		GUICtrlSetStyle ( -1 , 0x00001000 , 0x00000020 )
+
+	;##DISPLAY##
+		;#FRAME#
+			;Label
+			$lcframe = GUICtrlCreateLabel( "" , 149 , $cy + 14 , 42 , 21 )
+			;Stroke
+			GUICtrlSetBkColor( $lcframe , 0x000000 )
+		;#FILL#
+			;Label
+			$lcol = GUICtrlCreateLabel( "" , 150 , $cy + 15 , 40 , 19 )
+			;Fill
+			GUICtrlSetBkColor( $lcol , GUICtrlRead( $col ) )
+
+	;##SLIDERS##
+		;#SLIDER_R#
+			;Main
+			$slr = GUICtrlCreateSlider( 200 , $cy - 27 , 255 , 30 )
+			;Styles
+			GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+			GUICtrlSetBkColor ( -1 , 0xD0D0D0 )
+			;Default
+			GUICtrlSetData ( $slr , 100 )
+			;Display
+			$rv = GUICtrlCreateLabel( "Red: 255" , 455 , $cy - 27 , 50 , 15 )
+		;#SLIDER_G#
+			;Main
+			$slg = GUICtrlCreateSlider( 200 , $cy + 13 , 255 , 30 )
+			;Styles
+			GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+			GUICtrlSetBkColor ( -1 , 0xD0D0D0 )
+			;Default
+			GUICtrlSetData ( $slg , 100 )
+			;Display
+			$gv = GUICtrlCreateLabel( "Green: 255" , 455 , $cy + 13 , 70 , 15 )
+		;#SLIDER_B#
+			;Main
+			$slb = GUICtrlCreateSlider( 200 , $cy + 53 , 255 , 30 )
+			;Styles
+			GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+			GUICtrlSetBkColor ( -1 , 0xD0D0D0 )
+			;Default
+			GUICtrlSetData ( $slb , 100 )
+			;Display
+			$bv = GUICtrlCreateLabel( "Blue: 255" , 455 , $cy + 53 , 50 , 15 )
+
+
+$cy = $cy + 40
+
+
+;###MENUSECTION###
 GUICtrlCreateLabel( "MenuSection" , 10 , $cy , 100 , 15 )
+	;Main
+	$menu = GUICtrlCreateCombo( "0: Walls" , 10 , $cy + 15 , 130 , 20 )
+	;Styles
+	GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+	;Data
+	GUICtrlSetData ( -1 , "1: Electric|2: Powered|3: Sensors|4: Force-creating|5: Explosives|6: Gases|7: Liquids|8: Powders|9: Solids|10: Radioactive|11: Special|12: Life|13: Tools (UNRELIABLE)|14: Deco (UNRELIABLE)" )
 
-$menu = GUICtrlCreateCombo( "0: Walls" , 10 , $cy + 15 , 130 , 20 )
-
-GUICtrlSetData ( -1 , "1: Electric|2: Powered|3: Sensors|4: Force-creating|5: Explosives|6: Gases|7: Liquids|8: Powders|9: Solids|10: Radioactive|11: Special|12: Life|13: Tools (UNRELIABLE)|14: Deco (UNRELIABLE)" )
 
 $cy = $cy + 40
 
+
+;###GRAVITY###
 GUICtrlCreateLabel( "Gravity" , 10 , $cy , 100 , 15 )
+	;Main
+	$grav = GUICtrlCreateInput( "0" , 10 , $cy + 15 , 130 , 20 )
+	;Styles
+	GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
 
-$grav = GUICtrlCreateInput( "0" , 10 , $cy + 15 , 130 , 20 )
 
 $cy = $cy + 40
 
-GUICtrlCreateLabel( "Flammable" , 10 , $cy , 100 , 15 )
 
-$flammable = GUICtrlCreateInput( "0" , 10 , $cy + 15 , 130 , 20 )
+;###FLAMMABILITY###
+GUICtrlCreateLabel( "Flammable" , 10 , $cy , 100 , 15 )
+	;Main
+	$flammable = GUICtrlCreateInput( "0" , 10 , $cy + 15 , 130 , 20 )
+	;Styles
+	GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+
 
 $cy = $cy + 40
 
 GUICtrlCreateLabel( "Explosive" , 10 , $cy , 100 , 15 )
 
 $expl = GUICtrlCreateCombo( "0: Never" , 10 , $cy + 15 , 130 , 20 )
+
+GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
 
 GUICtrlSetData ( -1 , "1: Fire/Spark|2: Fire/Spark/Pressure" )
 
@@ -395,11 +491,15 @@ GUICtrlCreateLabel( "Loss" , 10 , $cy , 100 , 15 )
 
 $loss = GUICtrlCreateInput( "0" , 10 , $cy + 15 , 130 , 20 )
 
+GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+
 $cy = $cy + 40
 
 GUICtrlCreateLabel( "AirLoss" , 10 , $cy , 100 , 15 )
 
 $aloss = GUICtrlCreateInput( "1" , 10 , $cy + 15 , 130 , 20 )
+
+GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
 
 $cy = $cy + 40
 
@@ -407,11 +507,15 @@ GUICtrlCreateLabel( "AirDrag" , 10 , $cy , 100 , 15 )
 
 $adrag = GUICtrlCreateInput( "0" , 10 , $cy + 15 , 130 , 20 )
 
+GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+
 $cy = $cy + 40
 
 GUICtrlCreateLabel( "Advection" , 10 , $cy , 100 , 15 )
 
 $adv = GUICtrlCreateInput( "1" , 10 , $cy + 15 , 130 , 20 )
+
+GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
 
 $cy = $cy + 40
 
@@ -419,11 +523,15 @@ GUICtrlCreateLabel( "Weight" , 10 , $cy , 100 , 15 )
 
 $wght = GUICtrlCreateInput( "0" , 10 , $cy + 15 , 130 , 20 )
 
+GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+
 $cy = $cy + 40
 
 GUICtrlCreateLabel( "Diffusion" , 10 , $cy , 100 , 15 )
 
 $diff = GUICtrlCreateInput( "0" , 10 , $cy + 15 , 130 , 20 )
+
+GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
 
 $cy = $cy + 40
 
@@ -431,13 +539,16 @@ GUICtrlCreateLabel( "FallDown" , 10 , $cy , 100 , 15 )
 
 $fdn = GUICtrlCreateCombo( "0: Solid/Gas/Energy" , 10 , 545 , 130 , 20 )
 
+GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+
 GUICtrlSetData ( -1 , "1: Powder|2: Liquid" )
 
 $file = GUICtrlCreateMenu ( "File" )
-
 $save = GUICtrlCreateMenuItem ( "Save" , $file )
-
 $saveas = GUICtrlCreateMenuItem ( "Save As..." , $file )
+
+$help = GUICtrlCreateMenu ( "Help" )
+$bugrep = GUICtrlCreateMenuItem ( "Report Bug" , $help )
 
 Func lua ( $n1, $n2, $p, $d )
 	Return "elements.property(elements." & $n1 & "_PT_" & $n2 & ", '" & $p & "', '" & $d & "')" & @CRLF
@@ -619,6 +730,10 @@ While 1
 		Case $saveas
 
 			SaveFileAs ( )
+
+		Case $bugrep
+
+			BugRep ( )
 
 	EndSwitch
 
