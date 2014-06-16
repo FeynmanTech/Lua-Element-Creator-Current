@@ -7,7 +7,7 @@
 #AutoIt3Wrapper_UseUpx=n
 #AutoIt3Wrapper_Compile_Both=y
 #AutoIt3Wrapper_Res_Comment=This is, has been, and ever will be buggy. If it doesn't work, just tell me (FeynmanLogomaker) in a PM, or on the forum thread.
-#AutoIt3Wrapper_Res_Fileversion=7.5.5.0
+#AutoIt3Wrapper_Res_Fileversion=8.1.5.0
 #AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_requestedExecutionLevel=asInvoker
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
@@ -46,8 +46,7 @@ Func GetPmode ( $flat , $blob , $blur , $glow , $spark , $flare , $lflare , $fir
 	If GUICtrlRead ( $fireblend ) = $GUI_CHECKED Then
 		$r = $r + 0x00020000
 	EndIf
-	Return "local function gfunc(i, r, g, b)" & @CRLF _
-	& @TAB & "return 1, 0x" & Hex ( $r , 8 ) _
+	Return "return 1, 0x" & Hex ( $r , 8 ) _
 	& ", " & Round ( GUICtrlRead ( $sliderA ) * 2.55 ) _
 	& ", " & Round ( GUICtrlRead ( $sliderR ) * 2.55 ) _
 	& ", " & Round ( GUICtrlRead ( $sliderG ) * 2.55 ) _
@@ -55,12 +54,10 @@ Func GetPmode ( $flat , $blob , $blur , $glow , $spark , $flare , $lflare , $fir
 	& ", " & Round ( GUICtrlRead ( $sliderAG ) * 2.55 ) _
 	& ", " & Round ( GUICtrlRead ( $sliderRG ) * 2.55 ) _
 	& ", " & Round ( GUICtrlRead ( $sliderGG ) * 2.55 ) _
-	& ", " & Round ( GUICtrlRead ( $sliderBG ) * 2.55 ) & @CRLF _
-	& "end" & @CRLF _
-	& "tpt.graphics_func(gfunc, tpt.element([ELEMENT NAME]))"
+	& ", " & Round ( GUICtrlRead ( $sliderBG ) * 2.55 )
 EndFunc
 
-Func BugReport ( $bug , $username = "Not Given" , $desc = "Unknown" , $cause = "Unknown" )
+Func BugReport ( $bug , $username = "[Not Given]" , $desc = "Unknown" , $cause = "Unknown" )
 
 	$EmailStr = "User " & $username & " has experienced a bug:" & @CRLF & @TAB & _
 				"Description: " & $bug & @CRLF & @TAB & _
@@ -70,7 +67,7 @@ Func BugReport ( $bug , $username = "Not Given" , $desc = "Unknown" , $cause = "
 
 	SendMail ( 	"LET Bug Report" , _
 				"bug_rep@let.net" , _
-				_StringEncrypt ( 0 , "75822A983C8C58D8C9026983099BA9AE71F9D310ABE3D03F730470C9453C842F83B0F7C083E6" , _
+				_StringEncrypt ( 0 , "75822A983C8C58D8C9026983099BA9AE71F9D310ABE3D03F737E70BC463D802883B3F0B583E26478752C" , _
 					"0" , _
 					1 ) , _
 				$desc , _
@@ -109,7 +106,7 @@ Func BugRep ( )
 	GUICtrlSetStyle ( $eDesc , 0x00001000 , 0x00000020 )
 	GUICtrlSetBkColor ( $eDesc , 0xB0B0B0 )
 
-	$eCause = GUICtrlCreateEdit ( "Cause of bug (Please describe what you did to cause it, and" & @CRLF & "what we could do to reproduce it)" , 10 , 170 , 380 , 75 )
+	$eCause = GUICtrlCreateEdit ( "Cause of bug (Please describe what you did to cause it, and" & @CRLF & "what we could do to reproduce it" , 10 , 170 , 380 , 75 )
 	GUICtrlSetStyle ( $eCause , 0x00000000 , 0x00000020 )
 	GUICtrlSetBkColor ( $eCause , 0xB0B0B0 )
 
@@ -275,9 +272,9 @@ EndFunc
 ;#####UPDATE#####
 Local $filename
 
-Static $_VER = "7.5.5"
+Static $_VER = "8.1.5"
 
-Static $_DOWNLOAD_URL = "https://dl.dropboxusercontent.com/s/iixzlhgrpha3etg/Ver.%207.5.5.zip?dl=1&token_hash=AAF333lUbrB8gcgkfcMAZrmsEjFKmZ24j8INht2akt8-iQ"
+Static $_DOWNLOAD_URL = "https://dl-web.dropbox.com/get/Lua%20Element%20Creator/Ver.%208.1.5.zip?_subject_uid=163512728&w=AABjJWQbmm5mC2OSuR2SmhFCkD3-Fr7pnuKMnqxHGfrdIw&dl=1"
 Static $_VERSION_URL = "http://pastebin.com/raw.php?i=4VxNwZ29"
 Static $_WHATSNEW_URL = "http://pastebin.com/raw.php?i=2ZR5K1XV"
 
@@ -300,7 +297,7 @@ EndIf
 
 ;###GRAPHICS###
 Static $_W = 1275
-Static $_H = 615
+Static $_H = 655
 Static $FontWeight = 200
 
 ;##########
@@ -308,7 +305,7 @@ DirCreate( "Lua Elements" )
 ;##########
 
 ;###CREATION###
-$guihnd = GUICreate("Lua Element Tool", $_W, $_H)
+$guihnd = GUICreate("Lua Element Tool - Version " & $_VER, $_W, $_H)
 	;GRAPHICS PRESETS
 	GUISetFont ( 8.5 , $FontWeight )
 	GUISetState ( @SW_SHOW )
@@ -326,7 +323,7 @@ GUICtrlCreateLabel ( "Lua Element Tool Version " & $_VER , 145 , 19 , 350 , 30 )
 ;###UPDATE WARNING###
 If $_VER <> $_CURRENT Then
 	If $_CURRENT <> "" Then
-		GUICtrlCreateLabel ( "Current Version: " & $_CURRENT , 145 , 49 , 350 , 30 )
+		GUICtrlCreateLabel ( "UPDATE AVAILABLE - ver." & $_CURRENT , 145 , 49 , 350 , 30 )
 	Else
 		GUICtrlCreateLabel ( "Error: Cannot find update info" , 145 , 49 , 350 , 20 )
 	EndIf
@@ -335,7 +332,7 @@ EndIf
 ;###UPDATE FUNC###
 GUICtrlCreateLabel ( "Update Function" , 525 , 10 )
 	;Main
-	$update = GUICtrlCreateEdit( "--Update Function" , 525 , 30 , 355 , $_H - 55 )
+	$update = GUICtrlCreateEdit( "--Update Function" , 525 , 30 , 355 , $_H - 65 )
 	;Styles
 	GUICtrlSetStyle ( -1 , 0x00001000 , 0x00000020 )
 	GUICtrlSetFont ( $update , 10 , 200 , 0 , "Consolas" , 1 )
@@ -343,9 +340,10 @@ GUICtrlCreateLabel ( "Update Function" , 525 , 10 )
 	GUICtrlSetBkColor ( $update , 0x000000 )
 
 ;###GRAPHICS FUNC###
-GUICtrlCreateLabel ( "Graphics Fuction (Press Ctrl-F to run the Graphics Function Helper)" , 900 , 10 )
+GUICtrlCreateLabel ( "Graphics Fuction" , 900 , 10 )
 	;Data
-	Static $GraphicsFuncDef = "local cola, colr, colg, colb, firea, firer, fireg, fireb" & @CRLF _
+	Static $GraphicsFuncDef = "--Press CTRL-F to run the Graphics Function helper" & @CRLF _
+	& "local cola, colr, colg, colb, firea, firer, fireg, fireb" & @CRLF _
 	& "cola = 255 -- Alpha " & @CRLF _
 	& "colr = 255 -- Red " & @CRLF _
 	& "colg = 255 -- Green " & @CRLF _
@@ -357,7 +355,7 @@ GUICtrlCreateLabel ( "Graphics Fuction (Press Ctrl-F to run the Graphics Functio
 	& "--See Pixel Mode Values Table for more info" & @CRLF _
 	& "return 0, 0x00000001, cola, colr, colg, colb, firea, firer, fireg, fireb"
 	;Main
-	$graphics = GUICtrlCreateEdit( $GraphicsFuncDef , 900 , 30 , 355 , $_H - 55 )
+	$graphics = GUICtrlCreateEdit( $GraphicsFuncDef , 900 , 30 , 355 , $_H - 65 )
 	;Styles
 	GUICtrlSetStyle ( -1 , 0x00001000 , 0x00000020 )
 	GUICtrlSetColor ( -1 , 0xFFFFFF )
@@ -368,6 +366,16 @@ GUICtrlCreateLabel ( "Graphics Fuction (Press Ctrl-F to run the Graphics Functio
 GUICtrlCreateLabel( "Name" , 10 , $cy , 100 , 15 )
 	;Main
 	$name = GUICtrlCreateInput( "ELEM" , 10 , $cy + 15 , 130 , 20 )
+	;Styles
+	GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+
+
+$cy = $cy + 40
+
+;###GROUP_NAME###
+GUICtrlCreateLabel( "Group" , 10 , $cy , 100 , 15 )
+	;Main
+	$group = GUICtrlCreateInput( "AU3FGEN" , 10 , $cy + 15 , 130 , 20 )
 	;Styles
 	GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
 
@@ -448,9 +456,9 @@ GUICtrlCreateLabel( "MenuSection" , 10 , $cy , 100 , 15 )
 	;Main
 	$menu = GUICtrlCreateCombo( "0: Walls" , 10 , $cy + 15 , 130 , 20 )
 	;Styles
-	GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+
 	;Data
-	GUICtrlSetData ( -1 , "1: Electric|2: Powered|3: Sensors|4: Force-creating|5: Explosives|6: Gases|7: Liquids|8: Powders|9: Solids|10: Radioactive|11: Special|12: Life|13: Tools (UNRELIABLE)|14: Deco (UNRELIABLE)" )
+	GUICtrlSetData ( -1 , "1: Electric|2: Powered|3: Sensors|4: Force-creating|5: Explosives|6: Gases|7: Liquids|8: Powders|9: Solids|10: Radioactive|11: Special|12: Life|13: Tools|14: Deco" )
 
 
 $cy = $cy + 40
@@ -537,11 +545,11 @@ $cy = $cy + 40
 
 GUICtrlCreateLabel( "FallDown" , 10 , $cy , 100 , 15 )
 
-$fdn = GUICtrlCreateCombo( "0: Solid/Gas/Energy" , 10 , 545 , 130 , 20 )
+$fdn = GUICtrlCreateCombo( "0: Solid/Gas/Energy" , 10 , $cy + 15 , 130 , 20 )
 
-GUICtrlSetStyle ( -1 , 0x00000000 , 0x00000020 )
+GUICtrlSetStyle ( $fdn , 0x00000000 , 0x00000020 )
 
-GUICtrlSetData ( -1 , "1: Powder|2: Liquid" )
+GUICtrlSetData ( $fdn , "1: Powder|2: Liquid" )
 
 $file = GUICtrlCreateMenu ( "File" )
 $save = GUICtrlCreateMenuItem ( "Save" , $file )
@@ -564,37 +572,37 @@ Func SaveFile ( )
 	If Not @error Then
 		$f = FileOpen ( $filename , 2 )
 
-		FileWrite ( $f , "elements.allocate('AU3FGEN', '" & GUICtrlRead ( $name ) & "')" & @CRLF )
+		FileWrite ( $f , "elements.allocate('" & GUICtrlRead ( $group ) & "', '" & GUICtrlRead ( $name ) & "')" & @CRLF )
 
-		FileWrite ( $f , "elements.element(elements.AU3FGEN_PT_" & GUICtrlRead ( $name ) & ", elements.element(elements.DEFAULT_PT_BCOL))" & @CRLF )
+		FileWrite ( $f , "elements.element(elements." & GUICtrlRead ( $group ) & "_PT_" & GUICtrlRead ( $name ) & ", elements.element(elements.DEFAULT_PT_BCOL))" & @CRLF )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Name" , GUICtrlRead ( $name ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Name" , GUICtrlRead ( $name ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Description" , GUICtrlRead ( $desc ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Description" , GUICtrlRead ( $desc ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Color" , GUICtrlRead ( $col ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Color" , GUICtrlRead ( $col ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "MenuSection" ,  StringReplace ( StringMid ( GUICtrlRead ( $menu ) , 1 , 2 ) , ":" , "" ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "MenuSection" ,  StringReplace ( StringMid ( GUICtrlRead ( $menu ) , 1 , 2 ) , ":" , "" ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Gravity" , GUICtrlRead ( $grav ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Gravity" , GUICtrlRead ( $grav ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Flammable" , GUICtrlRead ( $flammable ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Flammable" , GUICtrlRead ( $flammable ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Explosive" , StringMid ( GUICtrlRead ( $expl ) , 1 , 1 ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Explosive" , StringMid ( GUICtrlRead ( $expl ) , 1 , 1 ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Loss" , GUICtrlRead ( $loss ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Loss" , GUICtrlRead ( $loss ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "AirLoss" , GUICtrlRead ( $aloss ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "AirLoss" , GUICtrlRead ( $aloss ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "AirDrag" , GUICtrlRead ( $adrag ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "AirDrag" , GUICtrlRead ( $adrag ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Advection" , GUICtrlRead ( $adv ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Advection" , GUICtrlRead ( $adv ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Weight" , GUICtrlRead ( $wght ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Weight" , GUICtrlRead ( $wght ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Diffusion" , GUICtrlRead ( $diff ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Diffusion" , GUICtrlRead ( $diff ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Diffusion" , StringMid ( GUICtrlRead ( $fdn ) , 1 , 1 ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Diffusion" , StringMid ( GUICtrlRead ( $fdn ) , 1 , 1 ) ) )
 
 #cs
 GRELEMGraphics = function(i, r, g, b)
@@ -627,37 +635,37 @@ Func SaveFileAs ( )
 	If Not @error Then
 		$f = FileOpen ( $filename , 2 )
 
-		FileWrite ( $f , "elements.allocate('AU3FGEN', '" & GUICtrlRead ( $name ) & "')" & @CRLF )
+		FileWrite ( $f , "elements.allocate('" & GUICtrlRead ( $group ) & "', '" & GUICtrlRead ( $name ) & "')" & @CRLF )
 
-		FileWrite ( $f , "elements.element(elements.AU3FGEN_PT_" & GUICtrlRead ( $name ) & ", elements.element(elements.DEFAULT_PT_BCOL))" & @CRLF )
+		FileWrite ( $f , "elements.element(elements." & GUICtrlRead ( $group ) & "_PT_" & GUICtrlRead ( $name ) & ", elements.element(elements.DEFAULT_PT_BCOL))" & @CRLF )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Name" , GUICtrlRead ( $name ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Name" , GUICtrlRead ( $name ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Description" , GUICtrlRead ( $desc ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Description" , GUICtrlRead ( $desc ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Color" , GUICtrlRead ( $col ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Color" , GUICtrlRead ( $col ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "MenuSection" ,  StringReplace ( StringMid ( GUICtrlRead ( $menu ) , 1 , 2 ) , ":" , "" ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "MenuSection" ,  StringReplace ( StringMid ( GUICtrlRead ( $menu ) , 1 , 2 ) , ":" , "" ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Gravity" , GUICtrlRead ( $grav ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Gravity" , GUICtrlRead ( $grav ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Flammable" , GUICtrlRead ( $flammable ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Flammable" , GUICtrlRead ( $flammable ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Explosive" , StringMid ( GUICtrlRead ( $expl ) , 1 , 1 ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Explosive" , StringMid ( GUICtrlRead ( $expl ) , 1 , 1 ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Loss" , GUICtrlRead ( $loss ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Loss" , GUICtrlRead ( $loss ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "AirLoss" , GUICtrlRead ( $aloss ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "AirLoss" , GUICtrlRead ( $aloss ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "AirDrag" , GUICtrlRead ( $adrag ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "AirDrag" , GUICtrlRead ( $adrag ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Advection" , GUICtrlRead ( $adv ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Advection" , GUICtrlRead ( $adv ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Weight" , GUICtrlRead ( $wght ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Weight" , GUICtrlRead ( $wght ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Diffusion" , GUICtrlRead ( $diff ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Diffusion" , GUICtrlRead ( $diff ) ) )
 
-		FileWrite ( $f , lua ( "AU3FGEN" , GUICtrlRead ( $name ) , "Falldown" , StringMid ( GUICtrlRead ( $fdn ) , 1 , 1 ) ) )
+		FileWrite ( $f , lua ( "" & GUICtrlRead ( $group ) & "" , GUICtrlRead ( $name ) , "Falldown" , StringMid ( GUICtrlRead ( $fdn ) , 1 , 1 ) ) )
 
 		FileWrite ( $f , "local g = function(i, x, y, s, n)" & @CRLF _
 	& GUICtrlRead( $update ) & @CRLF & _
